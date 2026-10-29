@@ -4,7 +4,9 @@ const path = require('path');
 const packageJson = require('../package.json');
 
 // Kamus terpusat JawaScript -> JavaScript
+// Kamus terpusat JawaScript -> JavaScript (Ditambah Method String/Array/Objek)
 const kamus = [
+    // --- Kata Kunci Dasar ---
     { from: /\bliyane\s+yen\b/g, to: 'else if' },
     { from: /\bkonstanta\b/g, to: 'const' },
     { from: /\bjarke\b/g, to: 'let' },
@@ -29,7 +31,21 @@ const kamus = [
     { from: /\bbaku\b/g, to: 'default' },
     { from: /\bmodul\b/g, to: 'module' },
     { from: /\bekspor\b/g, to: 'exports' },
-    { from: /\bkanggo\b/g, to: 'for' }
+    { from: /\bkanggo\b/g, to: 'for' },
+
+    // --- Method / Fungsi Bawaan (String, Array, dll) ---
+    { from: /\bawale\b/g, to: 'startsWith' },
+    { from: /\bpungkasane\b/g, to: 'endsWith' },
+    { from: /\bmotret\b/g, to: 'includes' }, // atau klebu / ngemot
+    { from: /\bnok\b/g, to: 'indexOf' },
+    { from: /\bganti\b/g, to: 'replace' },
+    { from: /\bpisah\b/g, to: 'split' },
+    { from: /\bgabung\b/g, to: 'join' },
+    { from: /\btekan\b/g, to: 'length' }, // Sifat/properti panjang string/array
+    { from: /\borahNduwe\b/g, to: 'undefined' },
+    { from: /\bkosong\b/g, to: 'null' },
+    { from: /\biman\b/g, to: 'push' }, // Masukin item ke array
+    { from: /\bcopot\b/g, to: 'pop' }   // Buang item terakhir array
 ];
 
 function kompilasiJawa(kode) {
