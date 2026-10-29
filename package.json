@@ -1,0 +1,21 @@
+{
+  "name": "jawascript-cli",
+  "version": "1.0.0",
+  "description": "Compiler dan interpreter bahasa pemrograman JawaScript berbasis Node.js",
+  "main": "bin/index.js",
+  "bin": {
+    "jawa": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jawa",
+    "jawascript",
+    "cli",
+    "interpreter"
+  ],
+  "author": "gurita darat ",
+  "license": "MIT",
+  "dependencies": {}
+}
