@@ -67,8 +67,8 @@ if (targetArg === '-v' || targetArg === '--version') {
     process.exit(0);
 }
 
-// 3. Command untuk Bantuan (-h atau --help)
-if (targetArg === '-h' || targetArg === --help) {
+// 3. Command untuk Bantuan (-h atau --help) -> [SUDAH DIPERBAIKI DENGAN TANDA KUTIP]
+if (targetArg === '-h' || targetArg === '--help') {
     console.log(`
 \x1b[36m┌──────────────────────────────────────────────┐\x1b[0m
 \x1b[36m│          ☕ JAWASCRIPT CLI HELP              │\x1b[0m
@@ -103,13 +103,11 @@ if (targetArg === '-d' || targetArg === '--daftar-kamus') {
 const basePath = path.resolve(process.cwd(), targetArg);
 let filePath = null;
 
-// Daftar kandidat pengecekan file secara berurutan:
 const kandidatFile = [
-    basePath,                       // 1. Cek apa adanya (contoh: "script.js.jawa" atau "index")
-    basePath + '.jawa',             // 2. Tambah ekstensi .jawa di ujung (contoh: "index" jadi "index.jawa")
+    basePath,
+    basePath + '.jawa',
 ];
 
-// Cari kandidat yang benar-benar ada di sistem
 for (const kandidat of kandidatFile) {
     if (fs.existsSync(kandidat) && fs.statSync(kandidat).isFile()) {
         filePath = kandidat;
@@ -117,7 +115,6 @@ for (const kandidat of kandidatFile) {
     }
 }
 
-// Jika tidak satupun kandidat yang ketemu, munculkan error
 if (!filePath) {
     console.error(`\x1b[31m[JawaScript Error] Waduh, file "${targetArg}" ora ketemu (baik dengan atau tanpa ekstensi)!\x1b[0m`);
     console.log(`\x1b[33m💡 Ketik 'jawa --help' kanggo ndeleng panduan.\x1b[0m`);
