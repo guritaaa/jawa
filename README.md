@@ -78,7 +78,7 @@ npm i -g github:guritaaa/jawa
 Jalankan di dalam folder project kamu:
 
 ```bash
-npm i github:guritaaa/jawa
+npm i jawa@github:guritaaa/jawa
 ```
 
 ---
@@ -128,7 +128,7 @@ Kamu tidak perlu membuat file jembatan seperti `main.js` atau `jawa.js` di dalam
 2. Buka tab **Startup** di panel Pterodactyl.
 3. Ubah **Startup Command** menjadi seperti ini:
    ```bash
-   node node_modules/jawascript-cli/bin/cli.js index
+   node node_modules/jawa/bin/cli.js index
    ```
    *(Catatan: Ganti kata `index` di paling belakang jika file utama kamu bernama lain, misalnya `kasus` untuk `kasus.jawa`).*
 4. Jalankan server (**Start**), dan bot JawaScript kamu langsung mengudara!
