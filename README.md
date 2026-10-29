@@ -124,7 +124,7 @@ jawa index
 
 Kamu tidak perlu membuat file jembatan seperti `main.js` atau `jawa.js` di dalam server Pterodactyl.
 
-1. Pastikan `github:guritaaa/jawa` sudah terdaftar di `package.json` project bot kamu, atau jalankan `npm i github:guritaaa/jawa`.
+1. Pastikan `github:guritaaa/jawa` sudah terdaftar di `package.json` project bot kamu, atau jalankan `npm i jawa@github:guritaaa/jawa`.
 2. Buka tab **Startup** di panel Pterodactyl.
 3. Ubah **Startup Command** menjadi seperti ini:
    ```bash
