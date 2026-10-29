@@ -88,26 +88,20 @@ require.extensions['.jawa'] = function(module, filename) {
     const kontenJS = kompilasiJawa(kontenAsli);
     module._compile(kontenJS, filename);
 };
-
 /**
  * Fungsi START cerdas untuk Pterodactyl / Server Lokal
- * @param {string} [namaFile] - Nama file opsional (contoh: "index" atau "bot")
+ * @param {string} [namaFile] - Nama file opsional (contoh: "index" atau "kasus")
  */
 function start(namaFile) {
     const target = namaFile || 'index';
-    let basePath;
-
-    try {
-        basePath = path.resolve(path.dirname(require.main.filename), target);
-    } catch (e) {
-        basePath = path.resolve(process.cwd(), target);
-    }
+    
+    // SELALU gunakan process.cwd() agar membaca folder tempat user mengetik perintah
+    const basePath = path.resolve(process.cwd(), target);
     
     let filePath = null;
     const kandidatFile = [
         basePath,
-        basePath + '.jawa',
-        basePath + '.js.jawa'
+        basePath + '.jawa'
     ];
 
     for (const kandidat of kandidatFile) {
@@ -118,12 +112,13 @@ function start(namaFile) {
     }
 
     if (!filePath) {
-        console.error(`\x1b[31m[JawaScript Error] Waduh, file utama "${target}" ora ketemu, Lur!\x1b[0m`);
+        console.error(`\x1b[31m[JawaScript Error] Waduh, file utama "${target}" ora ketemu ing direktori iki, Lur!\x1b[0m`);
         process.exit(1);
     }
 
     require(filePath);
 }
+
 
 module.exports = {
     kompilasiJawa,
