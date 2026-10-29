@@ -1,10 +1,7 @@
-#!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const packageJson = require('../package.json');
 
 // Kamus terpusat JawaScript -> JavaScript
-// Kamus terpusat JawaScript -> JavaScript (Ditambah Method String/Array/Objek)
 const kamus = [
     // --- Kata Kunci Dasar ---
     { from: /\bliyane\s+yen\b/g, to: 'else if' },
@@ -33,22 +30,49 @@ const kamus = [
     { from: /\bekspor\b/g, to: 'exports' },
     { from: /\bkanggo\b/g, to: 'for' },
 
-    // --- Method / Fungsi Bawaan (String, Array, dll) ---
+    // --- Method / Fungsi Bawaan ---
     { from: /\bawale\b/g, to: 'startsWith' },
     { from: /\bpungkasane\b/g, to: 'endsWith' },
-    { from: /\bmotret\b/g, to: 'includes' }, // atau klebu / ngemot
+    { from: /\bmotret\b/g, to: 'includes' },
     { from: /\bnok\b/g, to: 'indexOf' },
     { from: /\bganti\b/g, to: 'replace' },
     { from: /\bpisah\b/g, to: 'split' },
     { from: /\bgabung\b/g, to: 'join' },
-    { from: /\btekan\b/g, to: 'length' }, // Sifat/properti panjang string/array
+    { from: /\btekan\b/g, to: 'length' },
     { from: /\borahNduwe\b/g, to: 'undefined' },
     { from: /\bkosong\b/g, to: 'null' },
-    { from: /\biman\b/g, to: 'push' }, // Masukin item ke array
-    { from: /\bcopot\b/g, to: 'pop' }   // Buang item terakhir array
+    { from: /\biman\b/g, to: 'push' },
+    { from: /\bcopot\b/g, to: 'pop' }
+];
+
+// 🚫 DAFTAR KATA TERLARANG (Pura-pura "is not defined" ala JS asli kalau pakai JS murni)
+const kataTerlarang = [
+    { regex: /\bconsole\.log\b/g, nama: 'console' },
+    { regex: /\blet\b/g, nama: 'let' },
+    { regex: /\bconst\b/g, nama: 'const' },
+    { regex: /\bvar\b/g, nama: 'var' },
+    { regex: /\bfunction\b/g, nama: 'function' },
+    { regex: /\breturn\b/g, nama: 'return' },
+    { regex: /\bif\b/g, nama: 'if' },
+    { regex: /\belse\b/g, nama: 'else' },
+    { regex: /\btrue\b/g, nama: 'true' },
+    { regex: /\bfalse\b/g, nama: 'false' }
 ];
 
 function kompilasiJawa(kode) {
+    // 1. Bersihkan string dan komentar dari pengecekan agar tidak salah deteksi
+    let kodeBersih = kode.replace(/(\/\/.*|\/\*[\s\S]*?\*\/|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)/g, '""');
+
+    // 2. Cek apakah ada kata JS asli yang nyempil
+    for (const item of kataTerlarang) {
+        if (item.regex.test(kodeBersih)) {
+            console.error(`ReferenceError: ${item.nama} is not defined`);
+            console.error(`    at kompilasiJawa (${__filename}:1:1)`);
+            process.exit(1);
+        }
+    }
+
+    // 3. Lakukan terjemahan kamus JawaScript
     return kode.replace(/(\/\/.*|\/\*[\s\S]*?\*\/|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`)|([a-zA-Z_$][a-zA-Z0-9_$]*|\s+)/g, (match, isStringOrComment) => {
         if (isStringOrComment) return match;
         for (const item of kamus) {
@@ -58,83 +82,52 @@ function kompilasiJawa(kode) {
     });
 }
 
-global.kompilasiJawa = kompilasiJawa;
-
+// Daftarkan ekstensi .jawa secara otomatis
 require.extensions['.jawa'] = function(module, filename) {
     const kontenAsli = fs.readFileSync(filename, 'utf-8');
     const kontenJS = kompilasiJawa(kontenAsli);
     module._compile(kontenJS, filename);
 };
 
-// Ambil argumen dari terminal
-const args = process.argv.slice(2);
-const targetArg = args[0];
+/**
+ * Fungsi START cerdas untuk Pterodactyl / Server Lokal
+ * @param {string} [namaFile] - Nama file opsional (contoh: "index" atau "bot")
+ */
+function start(namaFile) {
+    const target = namaFile || 'index';
+    let basePath;
 
-// 1. Jika mengetik 'jawa' kosong tanpa argumen
-if (!targetArg) {
-    console.error(`\x1b[31m[JawaScript Error] Waduh, kok mung ngetik 'jawa' doang, Lur? Ora ana file sing dieksekusi!\x1b[0m`);
-    console.log(`\x1b[33m💡 Ketik 'jawa --help' kanggo ndeleng panduan lengkap.\x1b[0m`);
-    process.exit(1);
-}
-
-// 2. Command untuk Versi (-v atau --version)
-if (targetArg === '-v' || targetArg === '--version') {
-    console.log(`☕ JawaScript CLI Versi: \x1b[32m${packageJson.version}\x1b[0m`);
-    process.exit(0);
-}
-
-// 3. Command untuk Bantuan (-h atau --help) -> [SUDAH DIPERBAIKI DENGAN TANDA KUTIP]
-if (targetArg === '-h' || targetArg === '--help') {
-    console.log(`
-\x1b[36m┌──────────────────────────────────────────────┐\x1b[0m
-\x1b[36m│          ☕ JAWASCRIPT CLI HELP              │\x1b[0m
-\x1b[36m└──────────────────────────────────────────────┘\x1b[0m
-\x1b[33mCara Penggunaan:\x1b[0m
-  jawa <namafile>          Jalankan file (.jawa, tanpa ekstensi, atau dobel ekstensi)
-
-\x1b[33mDaftar Command / Opsi Lainnya:\x1b[0m
-  \x1b[32m-v, --version\x1b[0m          Ndeleng versi CLI saiki
-  \x1b[32m-h, --help\x1b[0m             Ndeleng panduan bantuan iki
-  \x1b[32m-d, --daftar-kamus\x1b[0m     Ndeleng daftar terjemahan sintaks
-
-\x1b[33mContoh Sederhana:\x1b[0m
-  jawa index
-  jawa index.jawa
-  jawa script.js.jawa
-    `);
-    process.exit(0);
-}
-
-// 4. Command Daftar Kamus (-d atau --daftar-kamus)
-if (targetArg === '-d' || targetArg === '--daftar-kamus') {
-    console.log(`\x1b[35m📜 Daftar Kamus JawaScript -> JavaScript:\x1b[0m`);
-    kamus.forEach(item => {
-        let dari = item.from.source.replace(/\\b/g, '').replace(/\\s\+/g, ' ');
-        console.log(`  • \x1b[33m${dari}\x1b[0m  ➔  \x1b[32m${item.to}\x1b[0m`);
-    });
-    process.exit(0);
-}
-
-// 5. Logika Pengecekan File Cerdas (Bypass & Fleksibel)
-const basePath = path.resolve(process.cwd(), targetArg);
-let filePath = null;
-
-const kandidatFile = [
-    basePath,
-    basePath + '.jawa',
-];
-
-for (const kandidat of kandidatFile) {
-    if (fs.existsSync(kandidat) && fs.statSync(kandidat).isFile()) {
-        filePath = kandidat;
-        break;
+    // Deteksi apakah dipanggil dari main.js root atau dari bin CLI
+    try {
+        basePath = path.resolve(path.dirname(require.main.filename), target);
+    } catch (e) {
+        basePath = path.resolve(process.cwd(), target);
     }
+    
+    let filePath = null;
+    const kandidatFile = [
+        basePath,
+        basePath + '.jawa',
+        basePath + '.js.jawa'
+    ];
+
+    for (const kandidat of kandidatFile) {
+        if (fs.existsSync(kandidat) && fs.statSync(kandidat).isFile()) {
+            filePath = kandidat;
+            break;
+        }
+    }
+
+    if (!filePath) {
+        console.error(`\x1b[31m[JawaScript Error] Waduh, file utama "${target}" ora ketemu, Lur!\x1b[0m`);
+        process.exit(1);
+    }
+
+    require(filePath);
 }
 
-if (!filePath) {
-    console.error(`\x1b[31m[JawaScript Error] Waduh, file "${targetArg}" ora ketemu (baik dengan atau tanpa ekstensi)!\x1b[0m`);
-    console.log(`\x1b[33m💡 Ketik 'jawa --help' kanggo ndeleng panduan.\x1b[0m`);
-    process.exit(1);
-}
-
-require(filePath);
+// Export modul agar fleksibel (bisa untuk CLI maupun modul library)
+module.exports = {
+    kompilasiJawa,
+    start
+};
