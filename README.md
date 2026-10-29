@@ -105,9 +105,7 @@ konstanta setelan = butuh('./setelan');
 
 jarke pesanMasuk = "!ping";
 
-yen (pesanMasuk.awale("!")) {
-    nyetak(setelan.sapa("Reza"));
-    nyetak("Panjang karakter pesan: " + pesanMasuk.tekan);
+yen (pesanMasuk.awale("!")) {    nyetak("Panjang karakter pesan: " + pesanMasuk.tekan);
 } liyane {
     nyetak("Ora ana perintah sing cocok.");
 }
@@ -139,5 +137,5 @@ Kamu tidak perlu membuat file jembatan seperti `main.js` atau `jawa.js` di dalam
 
 ## 👨‍💻 Kontributor & Lisensi
 
-* **Author:** reza maloloh (GURITA VPS)
+* **Author:** gurita darat
 * **Lisensi:** [MIT License](LICENSE) — Bebas digunakan dan dikembangkan untuk memajukan dunia per-kodingan lokal! ☕🐙
